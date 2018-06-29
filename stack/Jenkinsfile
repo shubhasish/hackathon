@@ -13,9 +13,8 @@ stages {
 
                      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
                      sh "export AWS_DEFAULT_REGION=us-east-1"
-                     sh "echo ${params.stack}"
-                     sh "ls"
-                     sh "aws s3 ls"
+                     sh "echo ${env.JOB_NAME}"
+                     
 }
           }
 
