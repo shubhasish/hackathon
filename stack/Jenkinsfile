@@ -1,6 +1,9 @@
 pipeline{
 
 agent any
+parameters {
+        string(name: 'stack', defaultValue: 'dev', description: 'Name of the stack')
+    }
 
 stages {
 
@@ -10,6 +13,7 @@ stages {
 
                      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
                      sh "export AWS_DEFAULT_REGION=us-east-1"
+                     sh "echo ${params.stack}"
                      sh "aws s3 ls"
 }
           }
