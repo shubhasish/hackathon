@@ -9,8 +9,8 @@ stages {
              script{
 
                      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-                     export AWS_DEFAULT_REGION=us-east-1
-                     aws s3 ls
+                     sh "export AWS_DEFAULT_REGION=us-east-1"
+                     sh "aws s3 ls"
 }
           }
 
