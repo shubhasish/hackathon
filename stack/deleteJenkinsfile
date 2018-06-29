@@ -7,7 +7,7 @@ parameters {
 
 stages {
 
-   stage('create-stack'){
+   stage('delete-stack'){
    steps {
              script{
 
