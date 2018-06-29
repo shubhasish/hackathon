@@ -7,12 +7,11 @@ parameters {
 
 stages {
 
-   stage('${env.JOB_NAME}'){
+   stage("${env.JOB_NAME}"){
    steps {
              script{
 
                      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-                     sh "export AWS_DEFAULT_REGION=us-east-1"
                      sh "aws cloudformation ${env.JOB_NAME} --stack-name dev --template-body file://stack/infrastructure.yaml"
 }
           }
