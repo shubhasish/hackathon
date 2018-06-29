@@ -8,10 +8,7 @@ stages {
    steps {
              script{
 
-                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'aws',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
-
-                     export AWS_ACCESS_KEY_ID=$USERNAME
-                     export AWS_SECRET_ACCESS_KEY=$PASSWORD
+                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
                      export AWS_DEFAULT_REGION=us-east-1
                      aws s3 ls
 }
