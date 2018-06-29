@@ -7,7 +7,7 @@ parameters {
 
 stages {
 
-   stage('create-stack'){
+   stage('Command Execution'){
    steps {
              script{
 
