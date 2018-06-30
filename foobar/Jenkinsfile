@@ -45,14 +45,14 @@ stage ('Deploy') {
         agent {
           dockerfile{
             filename 'Dockerfile'
-            dir 'service/deployment'
+            dir 'foobar/deployment'
 
           }
         }
         steps {
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-             sh "python service/deployment/deployer.py env=dev region=us-east-1 version=${env.BUILD_ID}"
+             sh "python foobar/deployment/deployer.py env=dev region=us-east-1 version=${env.BUILD_ID}"
 
           }
 
