@@ -19,7 +19,7 @@ Parameters:
     Application:
         Description: Name of the application
         Type: String
-        Default: "helloworld"
+        Default: "foobar"
     Version:
         Description: Name of the image
         Type: String
@@ -45,7 +45,7 @@ Resources:
             LoadBalancers: 
                 - ContainerName:
                      Ref: Application
-                  ContainerPort: 5000
+                  ContainerPort: 8080
                   TargetGroupArn:
                      Ref: TargetGroup
 
@@ -66,7 +66,7 @@ Resources:
                   Cpu: 0
                   PortMappings:
                     - HostPort: 0
-                      ContainerPort: 5000
+                      ContainerPort: 8080
                       Protocol: "tcp"
                   LogConfiguration:
                     LogDriver: awslogs
@@ -77,6 +77,11 @@ Resources:
                             Ref: AWS::Region
                         awslogs-stream-prefix:
                             Ref: Cluster
+                  Environment:
+                    -
+                      Name: "ARGS"
+                      Value:
+                        Ref: "--database.host=18.208.207.167 --database.port=3306 --database.name=foobar --database.username=root --database.password=root --gmaps.apiKey=AIzaSyDHdgx1xtN55k5vo7Y02WLCJGCu8s3dqvw --gmaps.baseUrl=ASAS"
     myLogGroup:
         Type: "AWS::Logs::LogGroup"
         Properties:
@@ -95,26 +100,42 @@ Resources:
             Matcher: 
                 HttpCode: 200-299
             HealthCheckIntervalSeconds: 10
-            HealthCheckPath: "/techgig/healthCheck"
+            HealthCheckPath: "/pool/healthCheck"
             HealthCheckProtocol: HTTP
             HealthCheckTimeoutSeconds: 5
             HealthyThresholdCount: 2
     
     ListenerRule:
         Type: AWS::ElasticLoadBalancingV2::ListenerRule
+        DependsOn: TargetGroup
         Properties:
-            ListenerArn:
-               Fn::ImportValue:
-                   Fn::Sub: '${Cluster}-Listner'
-            Priority: 2
-            Conditions:
-                - Field: path-pattern
-                  Values: 
-                    - "/techgig/*"
-            Actions:
-                - TargetGroupArn:
-                     Ref: TargetGroup
-                  Type: forward
+          Actions:
+            -
+              Type: forward
+              TargetGroupArn:
+                Ref: TargetGroup
+          Conditions:
+            -
+              Field: host-header
+              Values:
+                - !Sub "foobar.${Cluster}.internal"
+          ListenerArn:
+            'Fn::ImportValue': !Sub '${Cluster}-Listener'
+          Priority: 3
+
+#        Properties:
+#            ListenerArn:
+#               Fn::ImportValue:
+#                   Fn::Sub: '${Cluster}-Listner'
+#            Priority: 2
+#            Conditions:
+#                - Field: path-pattern
+#                  Values:
+#                    - "/techgig/*"
+#            Actions:
+#                - TargetGroupArn:
+#                     Ref: TargetGroup
+#                  Type: forward
 
     # This IAM Role grants the service access to register/unregister with the
     # Application Load Balancer (ALB). It is based on the default documented here:

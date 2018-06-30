@@ -40,7 +40,24 @@ stages {
  }
 
 
+stage ('Deploy') {
 
+        agent {
+          dockerfile{
+            filename 'Dockerfile'
+            dir 'service/deployment'
+
+          }
+        }
+        steps {
+
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
+             sh "python service/deployment/deployer.py env=dev region=us-east-1 version=${env.BUILD_ID}"
+
+          }
+
+}
+        }
 
 
 stage ('Cleanup') {
