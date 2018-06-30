@@ -86,7 +86,7 @@ Resources:
         Properties:
             RetentionInDays: 1
             LogGroupName:
-                Fn::Sub: "ECS-${Cluster}"
+                Fn::Sub: "ECS-${Cluster}-foobar"
 
     TargetGroup:
         Type: AWS::ElasticLoadBalancingV2::TargetGroup
