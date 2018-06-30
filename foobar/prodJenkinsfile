@@ -15,7 +15,7 @@ stage ('Deploy') {
         agent {
           dockerfile{
             filename 'Dockerfile'
-            dir 'service/deployment'
+            dir 'foobar/deployment'
 
           }
         }
@@ -24,7 +24,7 @@ stage ('Deploy') {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-             sh "python service/deployment/deployer.py env=prod region=us-east-1 version=${params.version}"
+             sh "python foobar/deployment/deployer.py env=prod region=us-east-1 version=${params.version}"
 
           }
 
