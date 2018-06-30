@@ -1,0 +1,72 @@
+pipeline{
+
+agent any
+
+stages {
+ stage ('Build'){
+
+        steps {
+            slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+            steps {
+
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
+             sh "aws s3 cp s3://ecs.deployment/foobarPool-1.0-SNAPSHOT.jar ."
+             sh "docker build -t foobar:latest  ./foobar/"
+
+          }
+        }
+
+ }
+
+ stage ('Push'){
+
+        steps {
+             script{
+
+                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
+
+                     sh "docker login -u $USERNAME -p $PASSWORD"
+                     sh "docker push shubhashish/foobar:${env.BUILD_ID}"
+                     sh "docker push shubhashish/foobar:latest"
+}
+          }
+        }
+
+ }
+
+
+
+
+
+stage ('Cleanup') {
+    steps{
+        script{
+
+
+        sh "docker rmi shubhashish/foobar:${env.BUILD_ID}"
+        sh "docker rmi shubhashish/foobar:latest"
+
+
+        }
+
+    }
+
+}
+
+}
+
+post {
+    success {
+      slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+    }
+  }
+
+
+}

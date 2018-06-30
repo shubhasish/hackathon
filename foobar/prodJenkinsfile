@@ -1,0 +1,50 @@
+pipeline{
+
+agent any
+
+parameters {
+        string(name: 'version', defaultValue: 'latest', description: 'Tag of image to be deployed')
+    }
+
+stages {
+
+
+
+stage ('Deploy') {
+
+        agent {
+          dockerfile{
+            filename 'Dockerfile'
+            dir 'service/deployment'
+
+          }
+        }
+        steps {
+
+            slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
+             sh "python service/deployment/deployer.py env=prod region=us-east-1 version=${params.version}"
+
+          }
+
+}
+        }
+
+
+}
+
+post {
+    success {
+      slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+    }
+
+    failure {
+      slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+
+    }
+  }
+
+
+}
