@@ -67,7 +67,7 @@ stage ('Deploy') {
         steps {
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-             sh "python deployment/deployer.py env=dev access_id=$USERNAME access_key=$PASSWORD region=us-east-1 version=${env.BUILD_ID}"
+             sh "python deployment/deployer.py env=dev region=us-east-1 version=${env.BUILD_ID}"
 
           }
 
