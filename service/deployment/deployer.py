@@ -88,6 +88,13 @@ class client:
         except Exception as e:
             return (False,e.message)
 
+    def get_stack_updates(self, stackName):
+        try:
+            stack = self.client.describe_stacks(StackName=stackName)
+            return (True, stack)
+        except Exception as e:
+            return (False, e.message)
+
 ### Input
 
 
