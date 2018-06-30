@@ -116,7 +116,7 @@ if os.path.isfile(deployment_file):
 
     service_name = yaml['Parameters']['Application']['Default']
     container_definitions = yaml['Resources']['TaskDefinition']['Properties']['ContainerDefinitions'][0]
-    version = 'latest'
+    version = dict['version']
     min_memory = container_definitions['MemoryReservation']
     max_memory = container_definitions['Memory']
     cpu= container_definitions["Cpu"]
