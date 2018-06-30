@@ -118,9 +118,11 @@ Resources:
             -
               Field: host-header
               Values:
-                - !Sub "foobar.${Cluster}.internal"
+                - Fn::Sub:
+                     "foobar.${Cluster}.internal"
           ListenerArn:
-            'Fn::ImportValue': !Sub '${Cluster}-Listener'
+            'Fn::ImportValue':
+                 Fn::Sub: '${Cluster}-Listner'
           Priority: 3
 
 #        Properties:
