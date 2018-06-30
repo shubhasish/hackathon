@@ -12,7 +12,7 @@ stages {
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
              sh "aws s3 cp s3://ecs.deployment/foobarPool-1.0-SNAPSHOT.jar ."
-             sh "docker build -t foobar:latest  ./foobar/"
+             sh "docker build -t foobar:latest  ./foobar/ --build-arg JAR=foobarPool-1.0-SNAPSHOT.jar"
 
 
         }
