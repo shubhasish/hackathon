@@ -80,8 +80,7 @@ Resources:
                   Environment:
                     -
                       Name: "ARGS"
-                      Value:
-                        Ref: "--database.host=18.208.207.167 --database.port=3306 --database.name=foobar --database.username=root --database.password=root --gmaps.apiKey=AIzaSyDHdgx1xtN55k5vo7Y02WLCJGCu8s3dqvw --gmaps.baseUrl=ASAS"
+                      Value: "--database.host=18.208.207.167 --database.port=3306 --database.name=foobar --database.username=root --database.password=root --gmaps.apiKey=AIzaSyDHdgx1xtN55k5vo7Y02WLCJGCu8s3dqvw --gmaps.baseUrl=ASAS"
     myLogGroup:
         Type: "AWS::Logs::LogGroup"
         Properties:
