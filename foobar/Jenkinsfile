@@ -8,16 +8,16 @@ stages {
         steps {
             slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
 
-            steps {
+
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
              sh "aws s3 cp s3://ecs.deployment/foobarPool-1.0-SNAPSHOT.jar ."
              sh "docker build -t foobar:latest  ./foobar/"
 
-          }
+
         }
 
- }
+ }}
 
  stage ('Push'){
 
