@@ -2,11 +2,13 @@ pipeline{
 
 agent any
 
-stages {
-
 parameters {
         string(name: 'version', defaultValue: 'latest', description: 'Tag of image to be deployed')
     }
+
+stages {
+
+
 
 stage ('Deploy') {
 
@@ -20,7 +22,7 @@ stage ('Deploy') {
         steps {
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-             sh "python service/deployment/deployer.py env=dev region=us-east-1 version=${params.version}"
+             sh "python service/deployment/deployer.py env=prod region=us-east-1 version=${params.version}"
 
           }
 

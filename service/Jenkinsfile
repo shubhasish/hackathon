@@ -77,7 +77,7 @@ stage ('Deploy') {
 stage ('Cleanup') {
     steps{
         script{
-        
+
 
         sh "docker rmi shubhashish/helloworld:${env.BUILD_ID}"
         sh "docker rmi shubhashish/helloworld:latest"
