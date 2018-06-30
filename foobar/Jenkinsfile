@@ -14,6 +14,10 @@ stages {
              sh "aws s3 cp s3://ecs.deployment/foobarPool-1.0-SNAPSHOT.jar ."
              sh "docker build -t foobar:latest  ./foobar/ --build-arg JAR=foobarPool-1.0-SNAPSHOT.jar"
 
+             sh "docker tag helloworld:latest shubhashish/foobar:latest"
+           sh "docker tag helloworld:latest shubhashish/foobar:${env.BUILD_ID}"
+
+
 
         }
 
