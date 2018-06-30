@@ -1,0 +1,22 @@
+version: '3.2'
+services:
+  hubot:
+   # image: jordan/hubot-slack:latest
+    image: mkaag/hubot
+    environment:
+      - HUBOT_SLACK_TOKEN=xoxb-238699374803-Sclrn6G8mq0Pa2IZBiV7rTJ5
+#      - REDIS_URL=redis://redis:6379
+#      - EXTERNAL_SCRIPTS=hubot-redis-brain
+    network_mode: "host"
+    volumes:
+#      - "/home/subhasishp/hackathon/hubo/scripts:/home/hubot/scripts"
+      - "/home/subhasishp/hackathon/hubo/scripts:/opt/scripts"
+#      - "/home/aditiw/work/hackathon/hubo/hubo/external-scripts.json:/home/hubot/external-scripts.json"
+#        #    - type: volume
+#          #      source: externalscript
+#            #      target: "/home/hubot/external-scripts.json"
+#              #      volume:
+#                #        nocopy: true
+  redis:
+    image: "redis"
+    network_mode: "host"
