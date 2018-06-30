@@ -1,0 +1,36 @@
+pipeline{
+
+agent any
+
+stages {
+
+parameters {
+        string(name: 'version', defaultValue: 'latest', description: 'Tag of image to be deployed')
+    }
+
+stage ('Deploy') {
+
+        agent {
+          dockerfile{
+            filename 'Dockerfile'
+            dir 'service/deployment'
+
+          }
+        }
+        steps {
+
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
+             sh "python service/deployment/deployer.py env=dev region=us-east-1 version=${params.version}"
+
+          }
+
+}
+        }
+
+
+
+
+}
+
+
+}

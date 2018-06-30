@@ -37,7 +37,7 @@ def uploadFile(client):
             logging.error(upload_result)
             os._exit(1)
 class client:
-    def __init__(self,type,access_id,access_key,region):
+    def __init__(self,type,region):
         self.client = boto3.client(type,region_name=region)
 
     def check_s3(self,path):

@@ -12,7 +12,7 @@ stages {
              script{
 
                      withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-                     sh "aws cloudformation ${env.JOB_NAME} --stack-name dev --template-body file://stack/infrastructure.yaml"
+                     sh "aws cloudformation ${env.JOB_NAME} --stack-name ${params.stack} --template-body file://stack/infrastructure.yaml"
 }
           }
 
