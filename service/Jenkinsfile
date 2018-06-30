@@ -8,9 +8,8 @@ stages {
         steps {
             script{
             sh "pwd"
-            def full_name=env.JOB_NAME.split('/')
-            def job_name=full_name[0]
-            sh "docker build -t ${job_name}:latest  ./service/"
+
+            sh "docker build -t helloworld:latest  ./service/"
 
             }
         }
@@ -21,17 +20,16 @@ stages {
         steps {
           script{
 
-          def full_name = env.JOB_NAME.split('/')
-          def job_name = full_name[0]
-          sh "docker run -d --name ${job_name}_latest -p 5000:5000 ${job_name}:latest"
+
+          sh "docker run -d --name ${job_name}_latest -p 5000:5000 helloworld:latest"
           sh "sleep 2"
           sh "curl -X GET http://localhost:5000/techgig/api/hello"
           sh "sleep 1"
           sh "curl -X GET http://localhost:5000/techgig/healthCheck"
           sh "docker stop ${job_name}_latest"
           sh "docker rm ${job_name}_latest"
-          sh "docker tag ${job_name}:latest shubhashish/${job_name}:latest"
-          sh "docker tag ${job_name}:latest shubhashish/${job_name}:${env.BUILD_ID}"
+          sh "docker tag helloworld:latest shubhashish/helloworld:latest"
+          sh "docker tag helloworld:latest shubhashish/helloworld:${env.BUILD_ID}"
 
           }
 
@@ -43,12 +41,12 @@ stages {
 
         steps {
              script{
-                     def full_name = env.JOB_NAME.split('/')
-                     def job_name = full_name[0]
+
                      withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
 
                      sh "docker login -u $USERNAME -p $PASSWORD"
-                     sh "docker push shubhashish/${job_name}:${env.BUILD_ID}"
+                     sh "docker push shubhashish/helloworld:${env.BUILD_ID}"
+                     sh "docker push shubhashish/helloworld:latest"
 }
           }
         }
@@ -79,12 +77,10 @@ stage ('Deploy') {
 stage ('Cleanup') {
     steps{
         script{
-        def full_name = env.JOB_NAME.split('/')
-        def job_name = full_name[0]
+        
 
-
-        sh "docker rmi shubhashish/${job_name}:${env.BUILD_ID}"
-        sh "docker rmi shubhashish/${job_name}:latest"
+        sh "docker rmi shubhashish/helloworld:${env.BUILD_ID}"
+        sh "docker rmi shubhashish/helloworld:latest"
 
 
         }
