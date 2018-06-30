@@ -9,7 +9,7 @@ stages {
             script{
             def full_name=env.JOB_NAME.split('/')
             def job_name=full_name[0]
-            sh "docker build -t ${job_name}:${env.BRANCH_NAME} ."
+            sh "docker build -t ${job_name}:latest -f service/Dockerfile"
 
             }
         }
@@ -22,15 +22,15 @@ stages {
 
           def full_name = env.JOB_NAME.split('/')
           def job_name = full_name[0]
-          sh "docker run -d --name ${job_name}_${env.BRANCH_NAME} -p 5000:5000 ${job_name}:${env.BRANCH_NAME}"
+          sh "docker run -d --name ${job_name}_latest -p 5000:5000 ${job_name}:latest"
           sh "sleep 2"
           sh "curl -X GET http://localhost:5000/techgig/api/hello"
           sh "sleep 1"
           sh "curl -X GET http://localhost:5000/techgig/healthCheck"
-          sh "docker stop ${job_name}_${env.BRANCH_NAME}"
-          sh "docker rm ${job_name}_${env.BRANCH_NAME}"
-          sh "docker tag ${job_name}:${env.BRANCH_NAME} shubhashish/${job_name}:latest"
-          sh "docker tag ${job_name}:${env.BRANCH_NAME} shubhashish/${job_name}:${env.BRANCH_NAME}-${env.BUILD_ID}"
+          sh "docker stop ${job_name}_latest"
+          sh "docker rm ${job_name}_latest"
+          sh "docker tag ${job_name}:latest shubhashish/${job_name}:latest"
+          sh "docker tag ${job_name}:latest shubhashish/${job_name}:${env.BUILD_ID}"
 
           }
 
@@ -44,11 +44,10 @@ stages {
              script{
                      def full_name = env.JOB_NAME.split('/')
                      def job_name = full_name[0]
-                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub_id',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
+                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub',usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]){
 
                      sh "docker login -u $USERNAME -p $PASSWORD"
-                     sh "docker push shubhashish/${job_name}:latest"
-                     sh "docker push shubhashish/${job_name}:${env.BRANCH_NAME}-${env.BUILD_ID}"
+                     sh "docker push shubhashish/${job_name}:${env.BUILD_ID}"
 }
           }
         }
@@ -60,14 +59,14 @@ stage ('Deploy') {
         agent {
           dockerfile{
             filename 'Dockerfile'
-            dir 'deployment'
+            dir 'service/deployment'
 
           }
         }
         steps {
 
             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws']]){
-             sh "python deployment/deployer.py env=dev access_id=$USERNAME access_key=$PASSWORD region=us-east-1 version=${env.BRANCH_NAME}-${env.BUILD_ID}"
+             sh "python deployment/deployer.py env=dev access_id=$USERNAME access_key=$PASSWORD region=us-east-1 version=${env.BUILD_ID}"
 
           }
 
@@ -82,9 +81,10 @@ stage ('Cleanup') {
         def full_name = env.JOB_NAME.split('/')
         def job_name = full_name[0]
 
+
+        sh "docker rmi shubhashish/${job_name}:${env.BUILD_ID}"
         sh "docker rmi shubhashish/${job_name}:latest"
-        sh "docker rmi shubhashish/${job_name}:${env.BRANCH_NAME}-${env.BUILD_ID}"
-        sh "docker rmi ${job_name}:${env.BRANCH_NAME}"
+
 
         }
 
